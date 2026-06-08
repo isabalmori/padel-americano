@@ -245,15 +245,15 @@ input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:22px;heigh
         <div style="font-size:13px;color:var(--text2);margin-top:4px" id="p-info">3 pistas · todos juegan</div>
       </div>
       <div class="stepper">
-        <button class="step-btn" onclick="changeP(-2)">−</button>
+        <button class="step-btn" onclick="changeP(-1)">−</button>
         <div class="step-val" id="p-val">12</div>
-        <button class="step-btn" onclick="changeP(2)">+</button>
+        <button class="step-btn" onclick="changeP(1)">+</button>
       </div>
     </div>
   </div>
   <div class="rest-alert" id="rest-alert">
     <span style="font-size:20px">☕</span>
-    <div class="rest-alert-text"><strong id="rest-n">0</strong> jugadores descansarán por ronda — el sorteo rota los descansos automáticamente</div>
+    <div class="rest-alert-text" id="rest-alert-text">☕ <strong id="rest-n">0</strong> jugadores descansarán por ronda — el sorteo rota automáticamente</div>
   </div>
 
   <div class="sec">Pistas disponibles</div>
@@ -526,14 +526,18 @@ function updatePInfo(){
   const ac=Math.min(c,Math.floor(p/4)),rest=p-ac*4;
   $('p-val').textContent=p;$('c-val').textContent=c;
   if(rest>0){
-    $('p-info').textContent=`${ac} pista${ac!==1?'s':''} activas · ${rest} descansa${rest!==1?'n':''}`;
+    const restDesc=rest===1?'1 jugador descansa':rest===2?'1 pareja descansa':rest===3?'1 pareja + 1 jugador descansan':`${rest} jugadores descansan`;
+    $('p-info').textContent=`${ac} pista${ac!==1?'s':''} activa${ac!==1?'s':''} · ${restDesc}`;
     const al=$('rest-alert');al.classList.add('show');$('rest-n').textContent=rest;
+    const alertIcon=rest===1?'🧍':'☕';
+    const alertMsg=rest===1?` jugador descansará por ronda`:` jugadores descansarán por ronda`;
+    const alertEl=$('rest-alert-text');if(alertEl)alertEl.innerHTML=alertIcon+' <strong id="rest-n">'+rest+'</strong>'+alertMsg+' — el sorteo rota automáticamente';
   }else{
     $('p-info').textContent=`${ac} pistas activas · todos juegan`;
     $('rest-alert').classList.remove('show');
   }
 }
-function changeP(d){T.players=Math.max(4,Math.min(40,T.players+d));if(T.players%2!==0)T.players+=d>0?1:-1;T.players=Math.max(4,T.players);updatePInfo()}
+function changeP(d){T.players=Math.max(4,Math.min(40,T.players+d));updatePInfo()}
 function changeC(d){T.courts=Math.max(1,Math.min(12,T.courts+d));updatePInfo()}
 
 document.querySelectorAll('.opt').forEach(b=>{
@@ -562,7 +566,8 @@ function shuffle(a){const r=[...a];for(let i=r.length-1;i>0;i--){const j=Math.fl
 function generateRound(players,rn){
   const sh=shuffle(players);
   const maxC=Math.min(T.courts,Math.floor(sh.length/4));
-  const resting=sh.slice(maxC*4);
+  const playing=maxC*4;
+  const resting=sh.slice(playing);
   const matches=[];
   for(let i=0;i<maxC;i++){const b=i*4;matches.push({court:i+1,round:rn,t1:[sh[b],sh[b+1]],t2:[sh[b+2],sh[b+3]],s1:'',s2:'',done:false});}
   return{matches,resting};
@@ -592,7 +597,14 @@ function renderMatches(){
   }
   const rd=T.rounds[cur];const list=$('m-list');list.innerHTML='';
   if(rd.resting&&rd.resting.length>0){
-    list.innerHTML+=`<div class="rest-card"><div class="rest-icon">☕</div><div><div class="rest-inner-label">Descansan esta ronda</div><div class="rest-names">${rd.resting.join(' · ')}</div></div></div>`;
+    const r=rd.resting;
+    const rLabel=r.length===1?'Descansa esta ronda':r.length===2?'Descansan esta ronda':'Descansan esta ronda';
+    const rIcon=r.length===1?'🧍':'☕';
+    const pairs=[];
+    if(r.length>=2)pairs.push(r[0]+' · '+r[1]);
+    if(r.length===3)pairs.push(r[2]+' (solo)');
+    if(r.length===1)pairs.push(r[0]);
+    list.innerHTML+=`<div class="rest-card"><div class="rest-icon">${rIcon}</div><div><div class="rest-inner-label">${rLabel}</div><div class="rest-names">${pairs.join('<br>')}</div></div></div>`;
   }
   rd.matches.forEach((m,mi)=>{
     const isT=T.fmt==='time';
