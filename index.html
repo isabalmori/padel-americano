@@ -1,0 +1,603 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<meta name="theme-color" content="#10b981">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Pádel">
+<link rel="manifest" href="manifest.json">
+<link rel="apple-touch-icon" href="icons/icon-192.png">
+<title>Pádel Americano</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap">
+<style>
+:root {
+  --green: #10b981;
+  --green-dark: #059669;
+  --green-light: #d1fae5;
+  --green-text: #065f46;
+  --amber: #f59e0b;
+  --amber-light: #fef3c7;
+  --amber-text: #78350f;
+  --blue: #3b82f6;
+  --blue-light: #dbeafe;
+  --blue-text: #1e3a8a;
+  --red: #ef4444;
+  --red-light: #fee2e2;
+  --red-text: #7f1d1d;
+  --bg: #0f172a;
+  --bg2: #1e293b;
+  --bg3: #334155;
+  --surface: #1e293b;
+  --surface2: #273548;
+  --border: rgba(255,255,255,0.08);
+  --border2: rgba(255,255,255,0.14);
+  --text: #f1f5f9;
+  --text2: #94a3b8;
+  --text3: #64748b;
+  --radius: 16px;
+  --radius-sm: 10px;
+  --radius-xs: 8px;
+}
+* { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
+html, body { height: 100%; background: var(--bg); font-family: 'Inter', sans-serif; color: var(--text); overflow-x: hidden; }
+
+/* SCREENS */
+.screen { display: none; min-height: 100vh; padding-bottom: 2rem; }
+.screen.active { display: block; }
+
+/* HERO HEADER */
+.hero { background: linear-gradient(135deg, #065f46 0%, #0f172a 60%); padding: 3rem 1.5rem 2rem; position: relative; overflow: hidden; }
+.hero::before { content: ''; position: absolute; top: -40px; right: -40px; width: 200px; height: 200px; border-radius: 50%; background: rgba(16,185,129,0.08); }
+.hero::after { content: ''; position: absolute; bottom: -20px; left: 30%; width: 120px; height: 120px; border-radius: 50%; background: rgba(16,185,129,0.05); }
+.hero-icon { width: 64px; height: 64px; background: var(--green); border-radius: 20px; display: flex; align-items: center; justify-content: center; margin-bottom: 1rem; font-size: 30px; }
+.hero h1 { font-size: 28px; font-weight: 700; color: #fff; line-height: 1.2; }
+.hero p { font-size: 14px; color: rgba(255,255,255,0.55); margin-top: 6px; }
+
+/* SECTION LABEL */
+.sec { font-size: 11px; font-weight: 600; letter-spacing: 0.08em; text-transform: uppercase; color: var(--text3); margin: 1.5rem 1.5rem 0.75rem; }
+
+/* CARDS */
+.card { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); padding: 1.25rem; margin: 0 1rem 0.75rem; }
+.card-row { display: flex; align-items: center; justify-content: space-between; }
+
+/* OPTION PILLS */
+.opt-row { display: grid; grid-template-columns: repeat(2, minmax(0,1fr)); gap: 8px; padding: 0 1rem; margin-bottom: 1rem; }
+.opt-row.three { grid-template-columns: repeat(3, minmax(0,1fr)); }
+.opt { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius-sm); padding: 12px 8px; text-align: center; cursor: pointer; font-size: 13px; font-weight: 500; color: var(--text2); transition: all 0.15s; user-select: none; }
+.opt:active { transform: scale(0.97); }
+.opt.sel { background: rgba(16,185,129,0.12); border-color: var(--green); color: var(--green); }
+
+/* STEPPER */
+.stepper { display: flex; align-items: center; gap: 0; background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius-sm); overflow: hidden; }
+.step-btn { width: 48px; height: 48px; background: var(--bg3); border: none; color: var(--text); font-size: 22px; cursor: pointer; display: flex; align-items: center; justify-content: center; transition: background 0.1s; }
+.step-btn:active { background: var(--green-dark); }
+.step-val { flex: 1; text-align: center; font-size: 22px; font-weight: 700; color: var(--text); padding: 0 12px; background: var(--surface); }
+
+/* INFO CHIP */
+.chip { display: inline-flex; align-items: center; gap: 5px; font-size: 12px; font-weight: 500; padding: 4px 10px; border-radius: 20px; }
+.chip-green { background: rgba(16,185,129,0.12); color: var(--green); }
+.chip-amber { background: var(--amber-light); color: var(--amber-text); }
+.chip-blue { background: var(--blue-light); color: var(--blue-text); }
+.chip-red { background: var(--red-light); color: var(--red-text); }
+
+/* BUTTONS */
+.btn-main { display: block; width: calc(100% - 2rem); margin: 1rem; background: var(--green); color: #fff; border: none; border-radius: var(--radius); padding: 16px; font-size: 16px; font-weight: 600; cursor: pointer; text-align: center; transition: background 0.15s; }
+.btn-main:active { background: var(--green-dark); transform: scale(0.99); }
+.btn-back { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius-xs); padding: 9px 14px; font-size: 14px; color: var(--text2); cursor: pointer; display: flex; align-items: center; gap: 6px; }
+.btn-back:active { background: var(--bg3); }
+.btn-ghost { background: var(--surface2); border: 1px solid var(--border); border-radius: var(--radius-xs); padding: 9px 14px; font-size: 13px; font-weight: 500; color: var(--text2); cursor: pointer; }
+.btn-ghost:active { background: var(--bg3); }
+
+/* NAV */
+.topnav { display: flex; align-items: center; gap: 10px; padding: 1rem 1rem 0.5rem; }
+.topnav h2 { font-size: 18px; font-weight: 600; color: var(--text); flex: 1; }
+
+/* ROUND TABS */
+.tabs { display: flex; overflow-x: auto; gap: 6px; padding: 0 1rem 0.75rem; scrollbar-width: none; }
+.tabs::-webkit-scrollbar { display: none; }
+.tab { flex-shrink: 0; padding: 7px 14px; border-radius: 20px; font-size: 13px; font-weight: 500; background: var(--surface); border: 1px solid var(--border); color: var(--text2); cursor: pointer; transition: all 0.15s; }
+.tab.act { background: var(--green); border-color: var(--green); color: #fff; }
+
+/* MATCH CARD */
+.match-card { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); padding: 1rem 1.25rem; margin: 0 1rem 0.75rem; }
+.match-card.done { border-color: rgba(16,185,129,0.3); }
+.match-head { display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; }
+.court-label { font-size: 12px; font-weight: 600; color: var(--green); display: flex; align-items: center; gap: 5px; }
+.teams-row { display: grid; grid-template-columns: 1fr auto 1fr; gap: 8px; align-items: center; }
+.team-block {}
+.team-names { font-size: 13px; line-height: 1.7; color: var(--text); }
+.team-names.right { text-align: right; }
+.vs-badge { width: 28px; height: 28px; background: var(--bg3); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 10px; font-weight: 700; color: var(--text3); margin: auto; }
+.score-row { display: flex; align-items: center; gap: 6px; margin-top: 10px; }
+.score-row.right { justify-content: flex-end; }
+.score-inp { width: 52px; height: 44px; text-align: center; background: var(--bg); border: 1px solid var(--border2); border-radius: var(--radius-xs); color: var(--text); font-size: 20px; font-weight: 700; }
+.score-inp:focus { outline: none; border-color: var(--green); }
+.score-sep { color: var(--text3); font-size: 16px; font-weight: 500; }
+
+/* REST CARD */
+.rest-card { background: rgba(245,158,11,0.08); border: 1px solid rgba(245,158,11,0.25); border-radius: var(--radius-sm); padding: 12px 14px; margin: 0 1rem 0.75rem; display: flex; align-items: flex-start; gap: 10px; }
+.rest-icon { font-size: 20px; flex-shrink: 0; margin-top: 1px; }
+.rest-names { font-size: 13px; color: #fbbf24; line-height: 1.6; }
+.rest-label { font-size: 11px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.06em; color: #d97706; margin-bottom: 3px; }
+
+/* PLAYER INPUT */
+.player-input-row { display: flex; align-items: center; gap: 10px; padding: 0 1rem; margin-bottom: 8px; }
+.player-avatar { width: 36px; height: 36px; border-radius: 50%; background: rgba(16,185,129,0.15); display: flex; align-items: center; justify-content: center; font-size: 12px; font-weight: 700; color: var(--green); flex-shrink: 0; }
+.player-avatar.rest-av { background: rgba(245,158,11,0.15); color: #f59e0b; }
+.player-input-field { flex: 1; background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius-xs); padding: 10px 14px; font-size: 14px; color: var(--text); font-family: inherit; }
+.player-input-field:focus { outline: none; border-color: var(--green); }
+
+/* STANDINGS */
+.st-header { display: flex; align-items: center; padding: 0 1.25rem 8px; border-bottom: 1px solid var(--border); margin: 0 1rem 4px; }
+.st-name-col { flex: 1; font-size: 11px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.06em; color: var(--text3); }
+.st-col { width: 36px; text-align: center; font-size: 11px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.06em; color: var(--text3); }
+.st-row { display: flex; align-items: center; padding: 10px 1.25rem; border-radius: var(--radius-xs); margin: 0 1rem 2px; }
+.st-row.gold { background: rgba(245,158,11,0.1); }
+.st-row.silver { background: rgba(148,163,184,0.07); }
+.st-row.bronze { background: rgba(180,130,90,0.06); }
+.st-rank { width: 28px; font-size: 16px; }
+.st-player { flex: 1; font-size: 14px; font-weight: 500; color: var(--text); }
+.st-stat { width: 36px; text-align: center; font-size: 13px; color: var(--text2); }
+.st-stat.hi { color: var(--green); font-weight: 600; }
+.st-stat.warn { color: #f59e0b; }
+
+/* SUMMARY STATS */
+.stats-grid { display: grid; grid-template-columns: repeat(2, minmax(0,1fr)); gap: 10px; padding: 0 1rem; margin-bottom: 1rem; }
+.stat-card { background: var(--surface2); border-radius: var(--radius-sm); padding: 1rem; }
+.stat-label { font-size: 11px; color: var(--text3); margin-bottom: 4px; }
+.stat-value { font-size: 24px; font-weight: 700; color: var(--text); }
+.stat-sub { font-size: 12px; color: var(--text2); margin-top: 2px; }
+
+/* PROGRESS */
+.round-progress { display: flex; align-items: center; gap: 8px; padding: 0 1rem; margin-bottom: 0.75rem; }
+.prog-bar { flex: 1; height: 4px; background: var(--bg3); border-radius: 2px; }
+.prog-fill { height: 100%; background: var(--green); border-radius: 2px; transition: width 0.4s; }
+.prog-label { font-size: 12px; color: var(--text3); min-width: 60px; text-align: right; }
+
+/* DIVIDER */
+.divider { height: 1px; background: var(--border); margin: 0.5rem 1rem; }
+
+/* RANGE SLIDER */
+.slider-row { display: flex; align-items: center; gap: 12px; padding: 0 1rem; margin-bottom: 1rem; }
+.slider-lbl { font-size: 13px; color: var(--text2); min-width: 90px; }
+input[type=range] { flex: 1; -webkit-appearance: none; height: 4px; background: var(--bg3); border-radius: 2px; outline: none; }
+input[type=range]::-webkit-slider-thumb { -webkit-appearance: none; width: 22px; height: 22px; border-radius: 50%; background: var(--green); cursor: pointer; }
+.slider-val { font-size: 14px; font-weight: 600; color: var(--text); min-width: 50px; text-align: right; }
+
+/* DONE STATE */
+.done-check { width: 22px; height: 22px; background: var(--green); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 12px; color: white; }
+
+/* SCROLL FIX */
+.scrollable { overflow-y: auto; }
+
+/* SAFE AREA */
+.safe-bottom { height: env(safe-area-inset-bottom, 16px); }
+</style>
+</head>
+<body>
+
+<!-- ═══ SCREEN: CONFIG ═══ -->
+<div id="s-config" class="screen active">
+  <div class="hero">
+    <div class="hero-icon">🎾</div>
+    <h1>Pádel Americano</h1>
+    <p>Configura tu torneo</p>
+  </div>
+
+  <div class="sec">Jugadores</div>
+  <div class="card">
+    <div class="card-row" style="margin-bottom:12px">
+      <div>
+        <div style="font-size:15px;font-weight:600;color:var(--text)">Número de jugadores</div>
+        <div style="font-size:13px;color:var(--text2);margin-top:2px" id="player-info">3 pistas activas · 0 descansan</div>
+      </div>
+      <div class="stepper" style="width:160px">
+        <button class="step-btn" onclick="changeP(-2)">−</button>
+        <div class="step-val" id="p-val">12</div>
+        <button class="step-btn" onclick="changeP(2)">+</button>
+      </div>
+    </div>
+    <div id="rest-preview" style="display:none" class="chip chip-amber">☕ Descansarán <span id="rest-count">0</span> jugadores por ronda</div>
+  </div>
+
+  <div class="sec">Pistas disponibles</div>
+  <div class="card">
+    <div class="card-row">
+      <div style="font-size:15px;font-weight:600;color:var(--text)">Pistas</div>
+      <div class="stepper" style="width:160px">
+        <button class="step-btn" onclick="changeC(-1)">−</button>
+        <div class="step-val" id="c-val">3</div>
+        <button class="step-btn" onclick="changeC(1)">+</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="sec">Formato de partido</div>
+  <div class="opt-row">
+    <div class="opt sel" data-g="fmt" data-v="points">🎯 Por puntos</div>
+    <div class="opt" data-g="fmt" data-v="time">⏱️ Por tiempo</div>
+  </div>
+
+  <div id="cfg-points">
+    <div class="sec">Puntos por set</div>
+    <div class="opt-row">
+      <div class="opt" data-g="pts" data-v="6">Hasta 6</div>
+      <div class="opt sel" data-g="pts" data-v="7">Hasta 7</div>
+      <div class="opt" data-g="pts" data-v="9">Hasta 9</div>
+      <div class="opt" data-g="pts" data-v="gp">Golden point</div>
+    </div>
+    <div class="sec">Sets</div>
+    <div class="opt-row three">
+      <div class="opt sel" data-g="sets" data-v="1">1 set</div>
+      <div class="opt" data-g="sets" data-v="2">2 sets</div>
+      <div class="opt" data-g="sets" data-v="3">3 sets</div>
+    </div>
+  </div>
+
+  <div id="cfg-time" style="display:none">
+    <div class="sec">Duración del partido</div>
+    <div class="slider-row">
+      <span class="slider-lbl">Minutos</span>
+      <input type="range" id="sl-time" min="5" max="45" value="15" step="5" oninput="document.getElementById('time-v').textContent=this.value+' min'">
+      <span class="slider-val" id="time-v">15 min</span>
+    </div>
+  </div>
+
+  <div class="sec">Clasificación por</div>
+  <div class="opt-row">
+    <div class="opt sel" data-g="scr" data-v="wins">🏆 Victorias</div>
+    <div class="opt" data-g="scr" data-v="games">🎾 Juegos</div>
+    <div class="opt" data-g="scr" data-v="pts_t">📊 Puntos</div>
+    <div class="opt" data-g="scr" data-v="combined">⚡ Combinado</div>
+  </div>
+
+  <button class="btn-main" onclick="goPlayers()">Continuar →</button>
+  <div class="safe-bottom"></div>
+</div>
+
+<!-- ═══ SCREEN: PLAYERS ═══ -->
+<div id="s-players" class="screen">
+  <div class="topnav">
+    <button class="btn-back" onclick="show('s-config')">← Volver</button>
+    <h2>Jugadores</h2>
+  </div>
+  <div class="stats-grid" style="margin-top:0.5rem">
+    <div class="stat-card">
+      <div class="stat-label">Jugadores</div>
+      <div class="stat-value" id="pl-count">12</div>
+      <div class="stat-sub">participantes</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-label">Rondas</div>
+      <div class="stat-value" id="pl-rounds">11</div>
+      <div class="stat-sub">rondas generadas</div>
+    </div>
+  </div>
+  <div id="pl-list"></div>
+  <button class="btn-main" onclick="generate()">🎾 Generar torneo</button>
+  <div class="safe-bottom"></div>
+</div>
+
+<!-- ═══ SCREEN: MATCHES ═══ -->
+<div id="s-matches" class="screen">
+  <div class="topnav">
+    <button class="btn-back" onclick="show('s-players')">← Volver</button>
+    <h2 id="m-title">Partidos</h2>
+    <button class="btn-ghost" onclick="renderStandings();show('s-standings')">Tabla 📊</button>
+  </div>
+  <div class="round-progress">
+    <div class="prog-bar"><div class="prog-fill" id="prog-fill" style="width:10%"></div></div>
+    <span class="prog-label" id="prog-label">Ronda 1/11</span>
+  </div>
+  <div class="tabs" id="r-tabs"></div>
+  <div id="m-list"></div>
+  <button class="btn-main" id="btn-next">Siguiente ronda →</button>
+  <div class="safe-bottom"></div>
+</div>
+
+<!-- ═══ SCREEN: STANDINGS ═══ -->
+<div id="s-standings" class="screen">
+  <div class="topnav">
+    <button class="btn-back" onclick="show('s-matches')">← Volver</button>
+    <h2>Clasificación</h2>
+  </div>
+  <div class="stats-grid">
+    <div class="stat-card">
+      <div class="stat-label">Rondas jugadas</div>
+      <div class="stat-value" id="st-rounds-done">0</div>
+      <div class="stat-sub" id="st-rounds-total">de 0 rondas</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-label">Partidos completados</div>
+      <div class="stat-value" id="st-matches-done">0</div>
+      <div class="stat-sub" id="st-matches-total">de 0 totales</div>
+    </div>
+  </div>
+  <div class="st-header">
+    <div class="st-name-col">Jugador</div>
+    <div class="st-col">PJ</div>
+    <div class="st-col" style="color:var(--green)">V</div>
+    <div class="st-col">D</div>
+    <div class="st-col" style="color:#f59e0b">☕</div>
+    <div class="st-col">Pts</div>
+  </div>
+  <div id="st-list"></div>
+  <div class="safe-bottom"></div>
+</div>
+
+<script>
+const T = {
+  players: 12, courts: 3, fmt: 'points', pts: '7', sets: 1, time: 15, scr: 'wins',
+  names: [], rounds: [], cur: 0
+};
+
+function $(id) { return document.getElementById(id); }
+function show(id) {
+  document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+  $(id).classList.add('active');
+  window.scrollTo(0, 0);
+}
+
+function updatePInfo() {
+  const p = T.players, c = T.courts;
+  const activeCourts = Math.min(c, Math.floor(p / 4));
+  const playing = activeCourts * 4;
+  const resting = p - playing;
+  $('p-val').textContent = p;
+  $('c-val').textContent = c;
+  if (resting > 0) {
+    $('player-info').textContent = `${activeCourts} pista${activeCourts !== 1 ? 's' : ''} activa${activeCourts !== 1 ? 's' : ''} · ${resting} descansa${resting !== 1 ? 'n' : ''}`;
+    $('rest-preview').style.display = 'inline-flex';
+    $('rest-count').textContent = resting;
+  } else {
+    $('player-info').textContent = `${activeCourts} pistas activas · todos juegan`;
+    $('rest-preview').style.display = 'none';
+  }
+}
+
+function changeP(d) {
+  T.players = Math.max(4, Math.min(40, T.players + d));
+  if (T.players % 2 !== 0) T.players += d > 0 ? 1 : -1;
+  T.players = Math.max(4, T.players);
+  updatePInfo();
+}
+function changeC(d) {
+  T.courts = Math.max(1, Math.min(12, T.courts + d));
+  updatePInfo();
+}
+
+document.querySelectorAll('.opt').forEach(b => {
+  b.addEventListener('click', function () {
+    const g = this.dataset.g;
+    document.querySelectorAll(`.opt[data-g="${g}"]`).forEach(x => x.classList.remove('sel'));
+    this.classList.add('sel');
+    const v = this.dataset.v;
+    if (g === 'fmt') {
+      T.fmt = v;
+      $('cfg-points').style.display = v === 'points' ? '' : 'none';
+      $('cfg-time').style.display = v === 'time' ? '' : 'none';
+    }
+    if (g === 'pts') T.pts = v;
+    if (g === 'sets') T.sets = parseInt(v);
+    if (g === 'scr') T.scr = v;
+  });
+});
+
+$('sl-time').addEventListener('input', function () { T.time = parseInt(this.value); });
+
+function goPlayers() {
+  $('pl-count').textContent = T.players;
+  $('pl-rounds').textContent = T.players - 1;
+  const list = $('pl-list');
+  list.innerHTML = '';
+  for (let i = 0; i < T.players; i++) {
+    const av = T.names[i] ? T.names[i].slice(0, 2).toUpperCase() : `J${i + 1}`;
+    list.innerHTML += `
+      <div class="player-input-row">
+        <div class="player-avatar" id="av-${i}">${av}</div>
+        <input class="player-input-field" type="text" placeholder="Jugador ${i + 1}" 
+          value="${T.names[i] || ''}" 
+          oninput="updAv(${i}, this.value)"
+          id="p-${i}">
+      </div>`;
+  }
+  show('s-players');
+}
+
+function updAv(i, v) {
+  const el = $(`av-${i}`);
+  if (el) el.textContent = v.trim() ? v.trim().slice(0, 2).toUpperCase() : `J${i + 1}`;
+}
+
+function shuffle(a) {
+  const r = [...a];
+  for (let i = r.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [r[i], r[j]] = [r[j], r[i]];
+  }
+  return r;
+}
+
+function generateRound(players, rn) {
+  const sh = shuffle(players);
+  const maxC = Math.min(T.courts, Math.floor(sh.length / 4));
+  const playing = maxC * 4;
+  const resting = sh.slice(playing);
+  const matches = [];
+  for (let i = 0; i < maxC; i++) {
+    const b = i * 4;
+    matches.push({
+      court: i + 1, round: rn,
+      t1: [sh[b], sh[b + 1]],
+      t2: [sh[b + 2], sh[b + 3]],
+      s1: '', s2: '', done: false
+    });
+  }
+  return { matches, resting };
+}
+
+function generate() {
+  const names = [];
+  for (let i = 0; i < T.players; i++) {
+    const v = $(`p-${i}`)?.value.trim();
+    names.push(v || `Jugador ${i + 1}`);
+  }
+  T.names = names;
+  T.rounds = [];
+  for (let r = 0; r < T.players - 1; r++) T.rounds.push(generateRound(names, r + 1));
+  T.cur = 0;
+  renderMatches();
+  show('s-matches');
+}
+
+function renderMatches() {
+  const total = T.rounds.length;
+  const cur = T.cur;
+  const pct = Math.round(((cur + 1) / total) * 100);
+  $('prog-fill').style.width = pct + '%';
+  $('prog-label').textContent = `Ronda ${cur + 1}/${total}`;
+  $('m-title').textContent = `Ronda ${cur + 1}`;
+
+  const tabs = $('r-tabs');
+  tabs.innerHTML = '';
+  for (let r = 0; r < total; r++) {
+    const allDone = T.rounds[r].matches.every(m => m.done);
+    const t = document.createElement('div');
+    t.className = 'tab' + (r === cur ? ' act' : '');
+    t.innerHTML = (allDone && r !== cur ? '✓ ' : '') + `R${r + 1}`;
+    t.onclick = (function (rr) { return function () { T.cur = rr; renderMatches(); }; })(r);
+    tabs.appendChild(t);
+  }
+
+  const rd = T.rounds[cur];
+  const list = $('m-list');
+  list.innerHTML = '';
+
+  if (rd.resting && rd.resting.length > 0) {
+    list.innerHTML += `
+      <div class="rest-card">
+        <div class="rest-icon">☕</div>
+        <div>
+          <div class="rest-label">Descansan esta ronda</div>
+          <div class="rest-names">${rd.resting.join(' · ')}</div>
+        </div>
+      </div>`;
+  }
+
+  rd.matches.forEach((m, mi) => {
+    const isTime = T.fmt === 'time';
+    const doneHtml = m.done ? `<div class="done-check">✓</div>` : '';
+    const scoreHtml = isTime
+      ? `<button onclick="markDone(${cur},${mi})" style="margin-top:8px;background:rgba(16,185,129,0.15);border:1px solid rgba(16,185,129,0.3);border-radius:8px;padding:7px 14px;font-size:12px;font-weight:600;color:var(--green);cursor:pointer">${m.done ? '✓ Finalizado' : '⏱ Marcar finalizado'}</button>`
+      : `<div class="score-row">
+          <input class="score-inp" type="number" min="0" max="99" value="${m.s1}" placeholder="0"
+            oninput="sv(${cur},${mi},0,this.value)" inputmode="numeric">
+          <span class="score-sep">–</span>
+          <input class="score-inp" type="number" min="0" max="99" value="${m.s2}" placeholder="0"
+            oninput="sv(${cur},${mi},1,this.value)" inputmode="numeric">
+        </div>`;
+
+    list.innerHTML += `
+      <div class="match-card ${m.done ? 'done' : ''}" id="mc-${mi}">
+        <div class="match-head">
+          <div class="court-label">🏟 Pista ${m.court}</div>
+          <div style="display:flex;align-items:center;gap:6px">
+            ${m.done ? `<span class="chip chip-green">✓ Finalizado</span>` : `<span class="chip" style="background:var(--bg3);color:var(--text3)">Pendiente</span>`}
+          </div>
+        </div>
+        <div class="teams-row">
+          <div class="team-block">
+            <div class="team-names">${m.t1[0]}<br>${m.t1[1]}</div>
+            ${scoreHtml}
+          </div>
+          <div class="vs-badge">VS</div>
+          <div class="team-block">
+            <div class="team-names right">${m.t2[0]}<br>${m.t2[1]}</div>
+          </div>
+        </div>
+      </div>`;
+  });
+
+  const nb = $('btn-next');
+  if (cur < total - 1) {
+    nb.textContent = `Ronda ${cur + 2} →`;
+    nb.onclick = nextRound;
+  } else {
+    nb.textContent = '🏆 Ver clasificación final';
+    nb.onclick = () => { renderStandings(); show('s-standings'); };
+  }
+}
+
+function sv(r, m, t, v) {
+  if (t === 0) T.rounds[r].matches[m].s1 = v;
+  else T.rounds[r].matches[m].s2 = v;
+  const mm = T.rounds[r].matches[m];
+  if (mm.s1 !== '' && mm.s2 !== '') mm.done = true;
+  const card = $(`mc-${m}`);
+  if (card) {
+    card.classList.toggle('done', mm.done);
+  }
+}
+function markDone(r, m) { T.rounds[r].matches[m].done = true; renderMatches(); }
+function nextRound() { if (T.cur < T.rounds.length - 1) { T.cur++; renderMatches(); window.scrollTo(0, 0); } }
+
+function renderStandings() {
+  const stats = {};
+  T.names.forEach(n => { stats[n] = { pj: 0, v: 0, d: 0, gf: 0, ga: 0, rest: 0 }; });
+  let doneMatches = 0, totalMatches = 0, doneRounds = 0;
+  T.rounds.forEach((rd, ri) => {
+    if (rd.resting) rd.resting.forEach(p => { if (stats[p]) stats[p].rest++; });
+    let rdDone = true;
+    rd.matches.forEach(m => {
+      totalMatches++;
+      if (!m.done) { rdDone = false; return; }
+      doneMatches++;
+      const s1 = parseInt(m.s1) || 0, s2 = parseInt(m.s2) || 0;
+      m.t1.forEach(p => { stats[p].pj++; stats[p].gf += s1; stats[p].ga += s2; if (s1 > s2) stats[p].v++; else stats[p].d++; });
+      m.t2.forEach(p => { stats[p].pj++; stats[p].gf += s2; stats[p].ga += s1; if (s2 > s1) stats[p].v++; else stats[p].d++; });
+    });
+    if (rdDone && rd.matches.length > 0) doneRounds++;
+  });
+
+  $('st-rounds-done').textContent = doneRounds;
+  $('st-rounds-total').textContent = `de ${T.rounds.length} rondas`;
+  $('st-matches-done').textContent = doneMatches;
+  $('st-matches-total').textContent = `de ${totalMatches} partidos`;
+
+  const sorted = Object.entries(stats).sort((a, b) => {
+    if (b[1].v !== a[1].v) return b[1].v - a[1].v;
+    return (b[1].gf - b[1].ga) - (a[1].gf - a[1].ga);
+  });
+
+  const list = $('st-list');
+  list.innerHTML = '';
+  sorted.forEach(([name, s], i) => {
+    const medal = i === 0 ? '🥇' : i === 1 ? '🥈' : i === 2 ? '🥉' : `${i + 1}`;
+    const rowCl = i === 0 ? 'gold' : i === 1 ? 'silver' : i === 2 ? 'bronze' : '';
+    list.innerHTML += `
+      <div class="st-row ${rowCl}">
+        <div class="st-rank">${medal}</div>
+        <div class="st-player">${name}</div>
+        <div class="st-stat">${s.pj}</div>
+        <div class="st-stat hi">${s.v}</div>
+        <div class="st-stat">${s.d}</div>
+        <div class="st-stat warn">${s.rest}</div>
+        <div class="st-stat hi">${s.v * 2}</div>
+      </div>`;
+  });
+}
+
+// Service Worker registration
+if ('serviceWorker' in navigator) {
+  window.addEventListener('load', () => {
+    navigator.serviceWorker.register('sw.js').catch(() => {});
+  });
+}
+
+updatePInfo();
+</script>
+</body>
+</html>
